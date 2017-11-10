@@ -3,11 +3,10 @@ set config_file=%sm_installation%\Uplatform.exe.Config
 set conf_file=%sm_installation%\Uplatform.conf
 set config_string=server=[SERVER];uid=[USER];pwd=[PASSWORD];database=[DB]
 set conf_string=server=[DB_Server];uid=[User];pwd=[Password];database=[DB]
-set connectionString=server=%ENV_DBSERVER%;uid=%ENV_DBUSERNAME%;pwd=%ENV_DBPASSWORD%;database=%ENV_DBNAME%
+set /P connectionString=<connectionString.txt
 
 :: save DB Credentials and information from env variables to config files
-echo %connectionString% > c:\password.txt
-::C:\Windows\System32\WindowsPowerShell\v1.0\Powershell.exe -Command "(Get-Content '%config_file%').Replace('%config_string%','%connectionString%') | Set-Content %config_file%"
+Powershell.exe -Command "(Get-Content '%config_file%').Replace('%config_string%','%connectionString%') | Set-Content %config_file%"
 
 :: Rename config file so that IIS will encrypt it
 
