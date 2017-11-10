@@ -1,5 +1,5 @@
+echo off
 set sm_installation=%ProgramFiles(x86)%\Genesys\Software\utopy\product\bin\release
-set sm_installation=C:\utopy\speechminer\utopy\product\bin\release
 set config_file=%sm_installation%\Uplatform.exe.Config
 set conf_file=%sm_installation%\Uplatform.conf
 set config_string=server=[SERVER];uid=[USER];pwd=[PASSWORD];database=[DB]
@@ -12,7 +12,7 @@ powershell -Command "(Get-Content '%config_file%').Replace('%config_string%','%c
 
 :: Rename config file so that IIS will encrypt it
 
-Ren %config_file% web.Config
+Ren "%config_file%" web.Config
 
 :: Encrypt using IIS
 set iss=%systemroot%\Microsoft.NET\Framework\v4.0.30319\aspnet_regiis.exe
@@ -20,10 +20,9 @@ set params=-pef "connectionStrings" "%sm_installation%" -prov RsaProtectedConfig
 %iss% %params%
 
 :: Rename config file back to original name
-Ren %sm_installation%\web.Config Uplatform.exe.Config
+Ren "%sm_installation%\web.Config" Uplatform.exe.Config
 
 ::TODO encrypt conf file **************************************************
 
 :: Run SQL Script
 sqlcmd -S %ENV_DBSERVER% -U %ENV_DBUSERNAME% -P %ENV_DBPASSWORD% -d %ENV_DBNAME% -i c:\StartUpScript.sql
-::Invoke-Sqlcmd -ServerInstance ${env:ENV_DBSERVER} -Username ${env:ENV_DBUSERNAME} -Password ${env:ENV_DBPASSWORD} -Database ${env:ENV_DBNAME} -InputFile "StartUpScript.sql"
