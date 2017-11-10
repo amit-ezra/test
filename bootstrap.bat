@@ -6,7 +6,7 @@ set conf_string=server=[DB_Server];uid=[User];pwd=[Password];database=[DB]
 set /P connectionString=<connectionString.txt
 
 :: save DB Credentials and information from env variables to config files
-Powershell.exe -Command "(Get-Content '%config_file%').Replace('%config_string%','%connectionString%') | Set-Content %config_file%"
+Powershell.exe -Command "(Get-Content '%config_file%').Replace('%config_string%','%connectionString%') | Set-Content '%config_file%'"
 
 :: Rename config file so that IIS will encrypt it
 
