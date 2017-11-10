@@ -1,4 +1,3 @@
-echo off
 set sm_installation=%ProgramFiles(x86)%\Genesys\Software\utopy\product\bin\release
 set config_file=%sm_installation%\Uplatform.exe.Config
 set conf_file=%sm_installation%\Uplatform.conf
@@ -8,7 +7,7 @@ set connectionString=server=%ENV_DBSERVER%;uid=%ENV_DBUSERNAME%;pwd=%ENV_DBPASSW
 
 :: save DB Credentials and information from env variables to config files
 
-powershell -Command "(Get-Content '%config_file%').Replace('%config_string%','%connectionString%') | Set-Content %config_file%"
+C:\Windows\System32\WindowsPowerShell\v1.0\Powershell.exe -Command "(Get-Content '%config_file%').Replace('%config_string%','%connectionString%') | Set-Content %config_file%"
 
 :: Rename config file so that IIS will encrypt it
 
