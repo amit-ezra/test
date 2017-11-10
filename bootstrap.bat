@@ -3,7 +3,7 @@ set config_file=%sm_installation%\Uplatform.exe.Config
 set conf_file=%sm_installation%\Uplatform.conf
 set config_string=server=[SERVER];uid=[USER];pwd=[PASSWORD];database=[DB]
 set conf_string=server=[DB_Server];uid=[User];pwd=[Password];database=[DB]
-set /P connectionString=<connectionString.txt
+set /P connectionString=<c:\connectionString.txt
 
 :: save DB Credentials and information from env variables to config files
 Powershell.exe -Command "(Get-Content '%config_file%').Replace('%config_string%','%connectionString%') | Set-Content '%config_file%'"
