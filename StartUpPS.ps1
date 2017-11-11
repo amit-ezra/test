@@ -8,8 +8,8 @@ $conf_string = "server=[DB_Server];uid=[User];pwd=[Password];database=[DB]"
 
 # replace connectionString
 $connectionString = Get-Content -Path "C:\Scripts\connectionString"
-(Get-Content $config_file%).Replace($config_string, $connectionString) | Set-Content $config_file
-(Get-Content $conf_file%).Replace($conf_string, $connectionString) | Set-Content $conf_file
+(Get-Content $config_file).Replace($config_string, $connectionString) | Set-Content $config_file
+(Get-Content $conf_file).Replace($conf_string, $connectionString) | Set-Content $conf_file
 
 # Read db credentials for sql commands
 [xml]$xmlfile = Get-Content -Path $config_file
