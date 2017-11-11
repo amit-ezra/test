@@ -32,7 +32,7 @@ Rename-Item ($sm_installation + "\web.Config") "Uplatform.exe.Config"
 # TODO -> Encrypt Uplatform.conf 
 
 # Run SQL Script
-Invoke-Sqlcmd -ServerInstance $db_server -Username $db_username -Password $db_password -Database $db_name -InputFile "c:\Scripts\StartUpScript.sql"
+sqlcmd -S $db_server -U $db_username -P $db_password -d $db_name -i "c:\Scripts\StartUpScript.sql"
 
 # TODO Restart Uplatform service? 
 # TODO Register shutdown scripts using c:\Scripts\ShutDownPS.ps1
