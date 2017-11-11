@@ -1,4 +1,5 @@
 # Uses Powershell 3
+Get-Date | Set-Content "C:\shutdown"
 $sm_installation = ${env:ProgramFiles(x86)} + "\Genesys\Software\utopy\product\bin\release"
 $config_file = $sm_installation + "\Uplatform.exe.Config"
 
