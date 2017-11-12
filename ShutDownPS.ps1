@@ -33,12 +33,12 @@ $params = @('-pef', "connectionStrings", "$sm_installation", '-prov', 'RsaProtec
  # Rename config file back to original name
 Rename-Item ($sm_installation + "\web.Config") "Uplatform.exe.Config"
 
-# Run SQL Script
-sqlcmd -S $db_server -U $db_username -P $db_password -d $db_name -i "c:\Scripts\ShutDownScript.sql"
-
 # set user data to run on startup, in case this is a restart and not termintation.
 $aws_config = "C:\Program Files\Amazon\Ec2ConfigService\Settings\config.xml"
 [xml]$aws_xml = Get-Content -Path $aws_config
 $index = $aws_xml.Ec2ConfigurationSettings.Plugins.Plugin.Name.IndexOf("Ec2HandleUserData")
 $aws_xml.Ec2ConfigurationSettings.Plugins.Plugin[$index].State = "Enabled"
 $aws_xml.Save($aws_config)
+
+# Run SQL Script
+sqlcmd -S $db_server -U $db_username -P $db_password -d $db_name -i "c:\Scripts\ShutDownScript.sql"

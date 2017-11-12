@@ -31,10 +31,10 @@ Rename-Item ($sm_installation + "\web.Config") "Uplatform.exe.Config"
 
 # TODO -> Encrypt Uplatform.conf 
 
+#register Shutdown script
+regedit /s C:\Scripts\RegisterShutDown.reg
+
 # Run SQL Script
 sqlcmd -S $db_server -U $db_username -P $db_password -d $db_name -i "c:\Scripts\StartUpScript.sql"
 
 # TODO Restart Uplatform service? 
-
-#register Shutdown script
-regedit /s C:\Scripts\RegisterShutDown.reg
