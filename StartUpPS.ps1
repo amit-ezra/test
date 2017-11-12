@@ -37,4 +37,4 @@ sqlcmd -S $db_server -U $db_username -P $db_password -d $db_name -i "c:\Scripts\
 # TODO Restart Uplatform service? 
 
 #register Shutdown script
-regedit /s C:\Script\RegisterShutDown.reg
+regedit /s C:\Scripts\RegisterShutDown.reg
