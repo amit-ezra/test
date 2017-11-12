@@ -34,7 +34,7 @@ $params = @('-pef', "connectionStrings", "$sm_installation", '-prov', 'RsaProtec
 Rename-Item ($sm_installation + "\web.Config") "Uplatform.exe.Config"
 
 # Run SQL Script
-Invoke-Sqlcmd -ServerInstance $db_server -Username $db_username -Password $db_password -Database $db_name -InputFile "C:\Scripts\ShutDownScript.sql"
+sqlcmd -S $db_server -U $db_username -P $db_password -d $db_name -i "c:\Scripts\ShutDownScript.sql"
 
 # set user data to run on startup, in case this is a restart and not termintation.
 $aws_config = "C:\Program Files\Amazon\Ec2ConfigService\Settings\config.xml"
