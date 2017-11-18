@@ -46,7 +46,7 @@ $conf_xml.Save($conf_file)
 regedit /s C:\Scripts\RegisterShutDown.reg
 
 # Run SQL Script
-sqlcmd -S $db_server -U $db_username -P $db_password -d $db_name -i "c:\Scripts\StartUpScript.sql"
+echo sqlcmd -S $db_server -U $db_username -P $db_password -d $db_name -i "c:\Scripts\StartUpScript.sql" > c:\scripts\sql
 
 # Create SM User
 $smuser = Get-Content -Path "C:\Scripts\LocalCredentials"
