@@ -48,14 +48,18 @@ regedit /s C:\Scripts\RegisterShutDown.reg
 # Run SQL Script
 sqlcmd -S $db_server -U $db_username -P $db_password -d $db_name -i "c:\Scripts\StartUpScript.sql"
 
+# Create SM User
+$smuser = Get-Content -Path "C:\Scripts\LocalCredentials"
+$computer = [ADSI]"WinNT://."
+$user = $computer.Create("User","SMUSER")
+$user.setpassword($smuser)
+$user.UserFlags = 65536 # set p]assword never expires
+$user.SetInfo()
+$group = [ADSI]"WinNT://./Administrators,group" 
+$group.add("WinNT://SMUSER,user") # add to administrator group
+
 # Install Uplatform service 
-$local_credentials = Get-Content -Path "C:\Scripts\LocalCredentials"
-$local_user = $encryptor.encrypt($local_credentials.Split(' ')[0])
-$local_pass = $encryptor.encrypt($local_credentials.Split(' ')[1])
-
 $uplatform = $sm_installation + "\Uplatform.exe"
-$u_params = @('-i',local_user, local_pass, '-s', 'Uplatform')
+$smuser_encrypted = $encryptor.encrypt($smuser)
+$u_params = @('-i','SMUSER', $smuser_encrypted, '-s', 'Uplatform')
 & "$uplatform" $u_params
-
-
-
