@@ -1,23 +1,31 @@
 # Uses Powershell 3
-$sm_installation = ${env:ProgramFiles(x86)} + "\Genesys\Software\utopy\product\bin\release"
-$config_file = $sm_installation + "\Uplatform.exe.Config"
-$conf_file = $sm_installation + "\Uplatform.conf"
+$sm_installation = "C:\GCTI\SpeechMiner\utopy\product\bin\release"
+
+$sm_installation = "${env:ProgramFiles(x86)}\Genesys\Software\utopy\product\bin\release"
+$config_file = "$sm_installation\Uplatform.exe.Config"
+$conf_file = "$sm_installation\Uplatform.conf"
+
+# Read db information
+$connection_string = Get-Content -Path "C:\Scripts\connectionString"
+$db_server = $connection_string.Split(' ')[0]
+$db_username = $connection_string.Split(' ')[1]
+$db_password = $connection_string.Split(' ')[2]
+$db_name = $connection_string.Split(' ')[3]
+
+# Load Triple Des Encryption DLL
+$encryptor_dll = [Reflection.Assembly]::LoadFile("C:\Scripts\Encryptor.dll")
+$encryptor = New-Object Encryptor.bSecurityCrypto.TripleDESEncryptor
+$encrypted_pass = $encryptor.encrypt($db_password)
 
 $config_string = "server=[SERVER];uid=[USER];pwd=[PASSWORD];database=[DB]"
 $conf_string = "server=[DB_Server];uid=[User];pwd=[Password];database=[DB]"
 
 # Replace connectionString
-$connection_string = Get-Content -Path "C:\Scripts\connectionString"
+$connection_string = "server=$db_server;uid=$db_username;pwd=$db_password;database=$db_name"
 (Get-Content $config_file).Replace($config_string, $connection_string) | Set-Content $config_file
-(Get-Content $conf_file).Replace($conf_string, $connection_string) | Set-Content $conf_file
 
-# Read db credentials
-[xml]$xmlfile = Get-Content -Path $config_file
-$db_server = $xmlfile.configuration.connectionStrings.add.GetAttribute('connectionString').Split(';')[0].Split('=')[1]
-$db_username = $xmlfile.configuration.connectionStrings.add.GetAttribute('connectionString').Split(';')[1].Split('=')[1]
-$db_password = $xmlfile.configuration.connectionStrings.add.GetAttribute('connectionString').Split(';')[2].Split('=')[1]
-$db_name = $xmlfile.configuration.connectionStrings.add.GetAttribute('connectionString').Split(';')[3].Split('=')[1]
-$xmlfile.Save($config_file)
+$connectionString = "server=$db_server;uid=$db_username;pwd=$encrypted_pass;database=$db_name"
+(Get-Content $conf_file).Replace($conf_string, $connection_string) | Set-Content $conf_file
 
 # Rename config file so that IIS will encrypt it
 Rename-Item $config_file "web.Config"
@@ -30,23 +38,11 @@ $params = @('-pef', "connectionStrings", "$sm_installation", '-prov', 'RsaProtec
 # Rename config file back to original name
 Rename-Item ($sm_installation + "\web.Config") "Uplatform.exe.Config"
 
-# Load Triple Des Encryption DLL
-$encryptor_dll = [Reflection.Assembly]::LoadFile("C:\Scripts\Encryptor.dll")
-$encryptor = New-Object Encryptor.bSecurityCrypto.TripleDESEncryptor
-$encrypted_pass = $encryptor.encrypt($db_password)
-
-[xml]$conf_xml = Get-Content -Path $conf_file
-$conf_StrC = "driver={SQL Server};server=" + $db_server +";uid=" + $db_username + ";pwd=" + $encrypted_pass + ";database=" + $db_name + ";"
-$conf_Str = "server=" + $db_server +";uid=" + $db_username + ";pwd=" + $encrypted_pass + ";database=" + $db_name + ";"
-$conf_xml.ConnStrC = $conf_StrC
-$conf_xml.ConnStr = $conf_Str
-$conf_xml.Save($conf_file)
-
 # Register Shutdown script
 regedit /s C:\Scripts\RegisterShutDown.reg
 
 # Run SQL Script
-echo sqlcmd -S $db_server -U $db_username -P $db_password -d $db_name -i "c:\Scripts\StartUpScript.sql" > c:\scripts\sql
+#sqlcmd -S $db_server -U $db_username -P $db_password -d $db_name -i "c:\Scripts\StartUpScript.sql"
 
 # Create SM User
 $smuser = Get-Content -Path "C:\Scripts\LocalCredentials"
@@ -59,7 +55,7 @@ $group = [ADSI]"WinNT://./Administrators,group"
 $group.add("WinNT://SMUSER,user") # add to administrator group
 
 # Install Uplatform service 
-$uplatform = $sm_installation + "\Uplatform.exe"
+$uplatform = "$sm_installation\Uplatform.exe"
 $smuser_encrypted = $encryptor.encrypt($smuser)
-$u_params = @('-i','SMUSER', $smuser_encrypted, '-s', 'Uplatform')
+$u_params = "-i SMUSER $smuser_encrypted -s Uplatform"
 & "$uplatform" $u_params

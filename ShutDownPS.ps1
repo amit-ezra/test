@@ -1,4 +1,6 @@
 # Uses Powershell 3
+$sm_installation = "C:\GCTI\SpeechMiner\utopy\product\bin\release"
+
 $sm_installation = ${env:ProgramFiles(x86)} + "\Genesys\Software\utopy\product\bin\release"
 $config_file = $sm_installation + "\Uplatform.exe.Config"
 
