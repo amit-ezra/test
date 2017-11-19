@@ -24,7 +24,7 @@ $conf_string = "server=[DB_Server];uid=[User];pwd=[Password];database=[DB]"
 $connection_string = "server=$db_server;uid=$db_username;pwd=$db_password;database=$db_name"
 (Get-Content $config_file).Replace($config_string, $connection_string) | Set-Content $config_file
 
-$connectionString = "server=$db_server;uid=$db_username;pwd=$encrypted_pass;database=$db_name"
+$connection_string = "server=$db_server;uid=$db_username;pwd=$encrypted_pass;database=$db_name"
 (Get-Content $conf_file).Replace($conf_string, $connection_string) | Set-Content $conf_file
 
 # Rename config file so that IIS will encrypt it
