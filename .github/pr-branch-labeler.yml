@@ -1,0 +1,4 @@
+2.12:
+  base: "release-2.12"
+"master":
+  base: ["release-2.13", "master"]
