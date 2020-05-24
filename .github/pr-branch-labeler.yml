@@ -2,3 +2,5 @@
   base: "release-2.12"
 master:
   base: ["release-2.13", "master"]
+no-squash:
+  head: ["release-*", "develop"]
