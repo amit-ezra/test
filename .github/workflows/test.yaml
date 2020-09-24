@@ -2,7 +2,7 @@ name: Lint, Tests and Upload Image
 
 on:
   push:
-    branches: [ develop, release* ]
+    branches: [ master, release* ]
 
 jobs:
 
