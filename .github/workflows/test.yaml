@@ -17,9 +17,10 @@ jobs:
       id: extract_branch
 
     - name: Build, tag, and push image to Amazon ECR
-      if: contains(github.event.label.name, 'build' )
+      if: contains(${{github.event.label.name}}, 'build')
       env:
         IMAGE_TAG: ${{ steps.extract_branch.outputs.branch }}
       run: |
         echo "Test"
         echo ${IMAGE_TAG} 
+        echo ${{github.event.label.name}}
