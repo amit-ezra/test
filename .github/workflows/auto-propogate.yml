@@ -15,7 +15,7 @@ jobs:
       id: git_bash
       shell: bash
       run: |
-        echo "current_branch=$(echo ${GITHUB_REF#refs/heads/})" # >> $GITHUB_ENV # example release-2.25.33
+        current_branch=$(echo ${GITHUB_REF#refs/heads/})"
         echo ${GITHUB_REF#refs/heads/}
         echo $current_branch
         current_release=${current_branch#"release-"} # example 2.25.33
