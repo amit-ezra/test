@@ -15,10 +15,10 @@ jobs:
       id: git_bash
       shell: bash
       run: |
-        current_branch=$(echo ${GITHUB_REF#refs/heads/})"
+        current_branch=$(echo ${GITHUB_REF#refs/heads/}) # release-2.25
         echo ${GITHUB_REF#refs/heads/}
         echo $current_branch
-        current_release=${current_branch#"release-"} # example 2.25.33
+        current_release=${current_branch#"release-"} # example 2.25
         echo $current_release
         current_minor=${current_release%.*} # example 2.25
         echo $current_minor
