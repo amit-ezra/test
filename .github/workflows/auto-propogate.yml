@@ -1,0 +1,49 @@
+Auto-Propogate
+name: Auto-Propogate
+
+on:
+  push:
+    branches: [release* ]
+jobs:
+  version-propogation:
+    runs-on: ubuntu-latest
+    outputs:
+      source_branch: ${{ steps.git_bash.outputs.source_branch }}
+      target_branch: ${{ steps.git_bash.outputs.target_branch }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Get branch names
+      id: git_bash
+      shell: bash
+      #run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      # id: extract_branch
+      run: |
+        echo "current_branch=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV \ # example release-2.25.33
+        current_release=${current_branch#"release-"} \ # example 2.25.33
+        current_minor=${current_release%.*} \ # example 2.25
+        next_release=$(echo "$current_minor + 0.01" | bc -l) \ # example release-2.26 # TODO remove hotfix version        
+        echo "Merging $current_release into $next_release"" \
+        branch_name="merge/${current_release}_to_${next_release}" \
+        
+        # stuff to avoid conflicts
+        echo "server/VERSION merge=ours" > .git/info/attributes
+        git config merge.ours.driver true
+        git checkout -b $branch_name \
+        git merge origin/release-${current_release} --no-edit
+        retVal=$?
+        if [ $retVal -ne 0 ]; then
+          echo "Merge failed"
+          exit $retVal
+        fi
+        git push --set-upstream  origin $branch_name
+        # output $branch_name & release-${current_release}
+        echo "::set-output name=source_branch::$branch_name"
+        echo "::set-output name=target_branch::release-${current_release}"
+    - name: pull-request
+      uses: repo-sync/pull-request@v2
+      with:
+        source_branch: "${{ steps.git_bash.outputs.source_branch }}"         # If blank, default: triggered branch
+        destination_branch: "${{ steps.git_bash.outputs.target_branch }}"    # If blank, default: master
+        pr_title: "Merge | ${{ steps.git_bash.outputs.source_branch }} to ${{ steps.git_bash.outputs.target_branch }}"                 # Title of pull request
+        pr_body: ""                              # Full markdown support, requires pr_title to be set
+        github_token: ${{ secrets.GITHUB_TOKEN }}
