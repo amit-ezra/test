@@ -15,9 +15,13 @@ jobs:
       id: git_bash
       shell: bash
       run: |
-        echo "current_branch=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV # example release-2.25.33
+        echo "current_branch=$(echo ${GITHUB_REF#refs/heads/})" # >> $GITHUB_ENV # example release-2.25.33
+        echo ${GITHUB_REF#refs/heads/}
+        echo $current_branch
         current_release=${current_branch#"release-"} # example 2.25.33
+        echo $current_release
         current_minor=${current_release%.*} # example 2.25
+        echo $current_minor
         next_release=$(echo "$current_minor + 0.01" | bc -l)  # example release-2.26 # TODO remove hotfix version        
         echo "Merging $current_release into $next_release"
         branch_name="merge/${current_release}_to_${next_release}"
