@@ -17,17 +17,17 @@ jobs:
       #run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
       # id: extract_branch
       run: |
-        echo "current_branch=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV \ # example release-2.25.33
-        current_release=${current_branch#"release-"} \ # example 2.25.33
-        current_minor=${current_release%.*} \ # example 2.25
-        next_release=$(echo "$current_minor + 0.01" | bc -l) \ # example release-2.26 # TODO remove hotfix version        
-        echo "Merging $current_release into $next_release"" \
-        branch_name="merge/${current_release}_to_${next_release}" \
+        echo "current_branch=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV # example release-2.25.33
+        current_release=${current_branch#"release-"} # example 2.25.33
+        current_minor=${current_release%.*} # example 2.25
+        next_release=$(echo "$current_minor + 0.01" | bc -l)  # example release-2.26 # TODO remove hotfix version        
+        echo "Merging $current_release into $next_release""
+        branch_name="merge/${current_release}_to_${next_release}"
         
         # stuff to avoid conflicts
         echo "server/VERSION merge=ours" > .git/info/attributes
         git config merge.ours.driver true
-        git checkout -b $branch_name \
+        git checkout -b $branch_name 
         git merge origin/release-${current_release} --no-edit
         retVal=$?
         if [ $retVal -ne 0 ]; then
